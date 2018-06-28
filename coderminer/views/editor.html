@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>编辑器</title>
+    <link rel="stylesheet" href="../static/css/normalize.css">
+    <link rel="stylesheet" href="../static/css/github-light.css">
+    <link rel="stylesheet" href="../static/css/simplemde.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <style>
+        .title-content {
+            border: none;
+            outline: none;
+            color: black;
+            font-size: 2rem;
+
+        }
+
+        .top-header {
+            display: flex;
+            display: -webkit-flex;
+            flex-direction: row;
+            align-items: center;
+            margin-top: 20px;
+            margin-right: 20px;
+            margin-left: 20px;
+            justify-content: space-between;
+        }
+
+        .tag-item{
+            display: inline-block;
+            padding: .4rem .7rem;
+            margin:0 .6rem .8rem 0;
+            font-size:1.1rem;
+            white-space: nowrap;
+            border-radius: 2px;
+            cursor: pointer;
+            border: 1px solid #f1f1f1;
+        }
+        .tag-item:hover {
+            color:#007fff;
+            border-color: rgba(0,127,255,.15);
+            background-color: rgba(0,127,255,.05);
+        }
+        .tag-item:active{
+            color:#007fff;
+            border-color: rgba(0,127,255,.15);
+            background-color: rgba(0,127,255,.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-header">
+        <input type="text" placeholder="请输入文章标题..." class="title-content">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">发布文章</button>
+    </div>
+
+    <div class="modal" id="exampleModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">选择标签</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="tag-item">Android</div>
+                    <div class="tag-item">iOS</div>
+                    <div class="tag-item">MongoDB</div>
+                    <div class="tag-item">Web Api</div>
+                    <div class="tag-item">前端</div>
+                    <div class="tag-item">产品</div>
+                    <div class="tag-item">人工智能</div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="Save()" >确定发布</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="main-content">
+        <textarea id="demo"></textarea>
+    </section>
+
+    <script src="../static/js/simplemde.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+        var simplemde = new SimpleMDE({
+            element: document.getElementById("demo"),
+            spellChecker: false,
+            autofocus: true,
+            autoDownloadFontAwesome: false,
+            placeholder: "Type here...",
+            autosave: {
+                enabled: true,
+                uniqueId: "demo",
+                delay: 1000,
+            },
+            tabSize: 4,
+            status: false,
+            lineWrapping: false,
+            renderingConfig: {
+                codeSyntaxHighlighting: true
+            },
+
+
+        });
+
+        simplemde.toggleSideBySide()
+
+        function Save() {
+            
+            var original = simplemde.value();
+            var htmlcontent = simplemde.markdown(original);
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    'content-type': "appliction/json"
+                },
+                data: {
+                    "origin": original,
+                    "html": htmlcontent
+                },
+                url: '/editor'
+            }
+            axios(options)
+            alert("save")
+        }
+    </script>
+</body>
+
+</html>
