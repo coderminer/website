@@ -22,6 +22,7 @@ type Blog struct {
 	Img      string `bson:"img"`
 	Original string `bson:"original"`
 	Content  string `bson:"content"`
+	DateStr  string `bson:"dateStr"`
 	Date     int64  `bson:"date"`
 	Tags     []Tag  `bson:"tags"`
 }
@@ -76,14 +77,15 @@ func (b *Blog) FindBlogByTag(tag string, pageindex int) ([]Blog, error) {
 	return blogs, err
 }
 
-func (b *Blog) FindAllBlog(pageindex int) ([]Blog, error) {
+func (b *Blog) FindAllBlog(pageindex int) ([]Blog, int, error) {
 	sc := session.Copy()
 	defer sc.Close()
 	var blogs []Blog
 
 	c := sc.DB(database).C(dbName)
+	total, _ := c.Count()
+	totalPages := total/limit + 1
+	err := c.Find(nil).Skip(pageindex * limit).Limit(limit).Sort("-date").All(&blogs)
 
-	err := c.Find(nil).Skip(pageindex).Limit(limit).Sort("date").All(&blogs)
-
-	return blogs, err
+	return blogs, totalPages, err
 }

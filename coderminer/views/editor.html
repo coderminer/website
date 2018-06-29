@@ -19,6 +19,7 @@
         crossorigin="anonymous"></script>
     <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 
     <style>
         .title-content {
@@ -26,7 +27,7 @@
             outline: none;
             color: black;
             font-size: 2rem;
-
+            width: 50%;
         }
 
         .top-header {
@@ -64,12 +65,14 @@
 </head>
 
 <body>
+    
     <div class="top-header">
-        <input type="text" placeholder="请输入文章标题..." class="title-content">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">发布文章</button>
+        <input type="text" placeholder="请输入文章标题..." class="title-content" id="title-val">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tagDialog">发布文章</button>
     </div>
 
-    <div class="modal" id="exampleModal" tabindex="-1" role="dialog">
+    <div class="modal" id="tagDialog" tabindex="-1" role="dialog">
+        <div class="alert alert-danger" role="alert" id="alert" style="display: none"></div>
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -79,6 +82,14 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <div class="form-group">
+                        <label for="des-text" class="col-form-label">文章描述:</label>
+                        <textarea class="form-control" id="des-text" rows="5" style="resize:none" ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="img-addr" class="col-form-label">题图地址:</label>
+                        <input type="text" class="form-control" id="img-addr">
+                    </div>
                     <div class="tag-item">Android</div>
                     <div class="tag-item">iOS</div>
                     <div class="tag-item">MongoDB</div>
@@ -89,7 +100,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="Save()" >确定发布</button>
+                    <button type="button" class="btn btn-primary" id="btn-ok" >确定发布</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
                 </div>
             </div>
@@ -103,50 +114,77 @@
     <script src="../static/js/simplemde.min.js"></script>
     <script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
 
     <script>
-        var simplemde = new SimpleMDE({
-            element: document.getElementById("demo"),
-            spellChecker: false,
-            autofocus: true,
-            autoDownloadFontAwesome: false,
-            placeholder: "Type here...",
-            autosave: {
-                enabled: true,
-                uniqueId: "demo",
-                delay: 1000,
-            },
-            tabSize: 4,
-            status: false,
-            lineWrapping: false,
-            renderingConfig: {
-                codeSyntaxHighlighting: true
-            },
+        $(document).ready(function(){
+            var simplemde = new SimpleMDE({
+                element: document.getElementById("demo"),
+                spellChecker: false,
+                autofocus: true,
+                autoDownloadFontAwesome: false,
+                placeholder: "Type here...",
+                autosave: {
+                    enabled: true,
+                    uniqueId: "demo",
+                    delay: 1000,
+                },
+                tabSize: 4,
+                status: false,
+                lineWrapping: false,
+                renderingConfig: {
+                    codeSyntaxHighlighting: true
+                },
 
+            });
 
+            simplemde.toggleSideBySide()
+            
+            $("#btn-ok").click(function(){
+                var title = $('#title-val').val();
+                var des = $("#des-text").val();
+                var imgaddr = $("#img-addr").val();
+                if(title.length == 0){
+                    $("#alert").show();
+                    $("#alert").text("标题不能为空");
+                    setTimeout(function(){
+                        $("#alert").hide();  
+                    },2000)
+                    return;
+                }
+                if(des.length == 0){
+                    $("#alert").show();
+                    $("#alert").text("文章的描述信息不能为空");
+                    setTimeout(function(){
+                        $("#alert").hide();
+                    },2000)
+                    return;
+                }
+                var htmlcontent = simplemde.markdown(simplemde.value());
+                
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'content-type': "appliction/json"
+                    },
+                    data: {
+                        "html": htmlcontent,
+                        "title": title,
+                        "des":des,
+                        "img":imgaddr,
+                    },
+                    url: '/editor'
+                }
+                axios(options)
+                //dismissDialog()
+            });
+
+            function dismissDialog(){
+                $("#tagDialog").modal('hide');
+            }
+            
         });
 
-        simplemde.toggleSideBySide()
-
-        function Save() {
-            
-            var original = simplemde.value();
-            var htmlcontent = simplemde.markdown(original);
-
-            const options = {
-                method: 'POST',
-                headers: {
-                    'content-type': "appliction/json"
-                },
-                data: {
-                    "origin": original,
-                    "html": htmlcontent
-                },
-                url: '/editor'
-            }
-            axios(options)
-            alert("save")
-        }
     </script>
 </body>
 

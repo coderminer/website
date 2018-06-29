@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="android" />
+    <meta name="keywords" content="博客" />
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../static/css/screen.css">
+    <link href="https://cdn.bootcss.com/github-markdown-css/2.10.0/github-markdown.min.css" rel="stylesheet">
+  
+    <link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/paraiso-dark.min.css" rel="stylesheet">
+    <title>{{.Content.Title}}</title>
+   
+</head>
+
+<body class="home-template">
+    <header class="main-header" >
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <a class="branding" href="http://www.ghostchina.com" title="Ghost 开源博客平台">
+                        <img src="http://static.ghostchina.com/image/b/46/4f5566c1f7bc28b3f7ac1fada8abe.png" alt="Ghost 开源博客平台">
+                    </a>
+                    <h2 class="text-hide">Ghost 是一个简洁、强大的写作平台。你只须专注于用文字表达你的想法就好，其余的事情就让 Ghost 来帮你处理吧。</h2>
+                </div>
+            </div>
+        </div>
+    </header>
+    {{template "nav.html" .}}
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content">
+                    <article class="post ">
+                        <div class="post-head">
+                            <h1 class="post-title">
+                                {{.Content.Title}}
+                            </h1>
+                            <div class="post-meta">
+                                <span class="author">
+                                    作者:
+                                    <a href="#">{{.Content.Author}}</a>
+                                </span>
+                                <time class="post-date">{{.Content.DateStr}}</time>
+                            </div>
+                        </div>
+                        
+                        <div class="post-content markdown-body">
+                            <p>{{str2html .Content.Content}}</p>
+                        </div>
+                        
+                        <footer class="post-footer clearfix">
+                            <div class="pull-left tag-list">
+                                <i class="fa fa-folder-open-o">
+                                    <a href="#">Android</a>
+                                    <a href="#">mongodb</a>
+                                </i>
+                            </div>
+                        </footer>
+                    </article>
+                   
+                    
+                </main>
+                {{template "sidebar.html" .}}
+            </div>
+        </div>
+    </section>
+    {{template "footer.html" .}}
+    {{template "copyright.html" .}}
+    <a href="#" id="back-to-top" style="display: block">
+        <i class="fa fa-angle-up"></i>
+    </a>
+
+</body>
+
+</html>

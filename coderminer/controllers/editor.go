@@ -4,6 +4,7 @@ import (
 	"coderminer/helper"
 	"coderminer/models"
 	"encoding/json"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -19,6 +20,9 @@ func (c *EditorController) Get() {
 type Object struct {
 	Origin string `json:"origin"`
 	Html   string `json:"html"`
+	Title  string `json:"title"`
+	Des    string `json:"des"`
+	Img    string `json:"Img"`
 }
 
 func (c *EditorController) Post() {
@@ -30,8 +34,14 @@ func (c *EditorController) Post() {
 	blogger := models.NewBlog()
 	blogger.Id = helper.GetMd5(bson.NewObjectId().Hex())
 
-	blogger.Original = data.Origin
 	blogger.Content = data.Html
+	blogger.Des = data.Html[0:200]
+	blogger.Title = data.Title
+	blogger.DateStr = time.Now().Format("2006年01月02日")
+	blogger.Author = "Kevin"
+	blogger.Des = data.Des
+	blogger.Img = data.Img
+	blogger.Date = time.Now().Unix()
 	blogger.PostBlog(blogger)
 
 	//fmt.Println("data",data.Html)
